@@ -248,27 +248,27 @@
                                             <!-- Personal Details -->
                                             <div class="row">
                                                 <div class="col-md-6 mb-3">
-                                                    <label class="form-label" for="firstName">First Name</label>
+                                                    <label class="form-label" for="firstName">First Name <span class="text-danger">*</span></label>
                                                     <input type="text" id="firstName" class="form-control" name="firstName" required />
                                                 </div>
                                                 <div class="col-md-6 mb-3">
-                                                    <label class="form-label" for="lastName">Last Name</label>
-                                                    <input type="text" id="lastName" class="form-control" name="lastName" required />
+                                                    <label class="form-label" for="middleName">Middle Name</label>
+                                                    <input type="text" id="middleName" class="form-control" name="middleName" />
                                                 </div>
                                             </div>
-
                                             <div class="mb-3">
-                                                <label class="form-label" for="middleName">Middle Name</label>
-                                                <input type="text" id="middleName" class="form-control" name="middleName" />
+                                                <label class="form-label" for="lastName">Last Name <span class="text-danger">*</span></label>
+                                                <input type="text" id="lastName" class="form-control" name="lastName" required />
                                             </div>
+
 
                                             <div class="row">
                                                 <div class="col-md-6 mb-3">
-                                                    <label class="form-label" for="dateOfBirth">Date of Birth</label>
+                                                    <label class="form-label" for="dateOfBirth">Date of Birth <span class="text-danger">*</span></label>
                                                     <input type="date" id="dateOfBirth" class="form-control" name="dateOfBirth" required />
                                                 </div>
                                                 <div class="col-md-6 mb-3">
-                                                    <label class="form-label" for="gender">Gender</label>
+                                                    <label class="form-label" for="gender">Gender <span class="text-danger">*</span></label>
                                                     <select id="gender" class="form-select" name="gender" required>
                                                         <option value="">Select Gender</option>
                                                         <option value="Male">Male</option>
@@ -286,19 +286,19 @@
                                             </h6>
 
                                             <div class="mb-3">
-                                                <label class="form-label" for="parentName">Parent/Guardian Full Name</label>
+                                                <label class="form-label" for="parentName">Parent/Guardian Full Name <span class="text-danger">*</span></label>
                                                 <input type="text" id="parentName" class="form-control" name="parentName" required />
                                             </div>
 
                                             <div class="row">
                                                 <div class="col-md-6 mb-3">
-                                                    <label class="form-label" for="parentContact">Contact Number</label>
+                                                    <label class="form-label" for="parentContact">Contact Number <span class="text-danger">*</span></label>
                                                     <input type="tel" id="parentContact"
                                                         oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11)"
                                                         class="form-control" name="parentContact" required />
                                                 </div>
                                                 <div class="col-md-6 mb-3">
-                                                    <label class="form-label" for="relationship">Relationship</label>
+                                                    <label class="form-label" for="relationship">Relationship <span class="text-danger">*</span></label>
                                                     <select id="relationship" class="form-select" name="relationship" required>
                                                         <option value="">Select Relationship</option>
                                                         <option value="Mother">Mother</option>
@@ -310,20 +310,20 @@
 
 
                                             <div class="mb-3">
-                                                <label class="form-label" for="address">Address</label>
+                                                <label class="form-label" for="address">Address <span class="text-danger">*</span></label>
                                                 <textarea id="address" class="form-control" rows="2" name="address" required></textarea>
                                             </div>
 
                                             <!-- Account Details -->
                                             <div class="mb-3">
-                                                <label class="form-label" for="username">Username</label>
+                                                <label class="form-label" for="username">Username <span class="text-danger">*</span></label>
                                                 <input type="text" id="username" class="form-control" name="username" required />
                                                 <div class="form-text">Username must be unique and contain only letters and numbers</div>
                                             </div>
 
                                             <div class="row">
                                                 <div class="col-md-6 mb-3">
-                                                    <label class="form-label" for="email">Email Address</label>
+                                                    <label class="form-label" for="email">Email Address <span class="text-danger">*</span></label>
                                                     <input type="email" id="email" class="form-control" name="email" required />
                                                 </div>
                                                 <div class="col-md-6 mb-3">
@@ -333,7 +333,7 @@
                                             </div>
 
                                             <div class="mb-3">
-                                                <label class="form-label" for="registerPassword">Password</label>
+                                                <label class="form-label" for="registerPassword">Password <span class="text-danger">*</span></label>
                                                 <div class="input-group">
                                                     <input type="password" id="registerPassword" class="form-control" name="registerPassword" required />
                                                     <button class="btn btn-outline-secondary" type="button" id="toggleRegisterPassword">
@@ -344,14 +344,14 @@
                                             </div>
 
                                             <div class="mb-3">
-                                                <label class="form-label" for="confirmPassword">Confirm Password</label>
+                                                <label class="form-label" for="confirmPassword">Confirm Password <span class="text-danger">*</span></label>
                                                 <input type="password" id="confirmPassword" class="form-control" name="confirmPassword" required />
                                                 <div id="passwordMatch" class="form-text"></div>
                                             </div>
                                             <div class="mb-5">
                                                 <div class="row col-md-12">
                                                     <div class="col-md-6 mb-3">
-                                                        <label class="form-label text-muted fw-semibold">Valid ID *</label>
+                                                        <label class="form-label text-muted fw-semibold">Valid ID <span class="text-danger">*</span></label>
                                                         <div class="file-upload-container" onclick="document.getElementById('prevIdSchoolFile').click()">
                                                             <i class="fas fa-cloud-upload-alt fs-3 mb-2 text-muted"></i>
                                                             <p class="mb-1 text-muted">Click to upload Valid ID</p>
