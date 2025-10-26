@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Sep 29, 2025 at 02:55 PM
+-- Generation Time: Oct 26, 2025 at 07:45 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.0.28
 
@@ -37,20 +37,21 @@ CREATE TABLE `tbl_account` (
   `reg_acc_status` int(11) DEFAULT 1,
   `date_registered` datetime DEFAULT current_timestamp(),
   `date_enrolled` datetime DEFAULT NULL,
-  `email_verified` tinyint(1) DEFAULT 0
+  `email_verified` tinyint(1) DEFAULT 0,
+  `device_login` varchar(100) DEFAULT 'None'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tbl_account`
 --
 
-INSERT INTO `tbl_account` (`acc_id`, `username`, `email`, `password`, `role`, `enrollment_status`, `reg_acc_status`, `date_registered`, `date_enrolled`, `email_verified`) VALUES
-(1, 'admin', 'jcdavid@gmail.com', '$2y$10$Z5JPFdmQq5vRcI10R0UqbOpjx9lAmjgl74Le3scj53aRAodx9a2IO', 'Admin', 'Not Enrolled', 2, '2025-09-12 20:35:58', NULL, 0),
-(2, 'juancruz', 'jcdavid2@gmail.com', 'stud123', 'Student', 'Not Enrolled', 1, '2025-09-12 20:35:58', NULL, 0),
-(3, 'anasantos', 'jcdavid3@gmail.com', 'stud123', 'Student', 'Not Enrolled', 1, '2025-09-12 20:35:58', NULL, 0),
-(1002, 'chesca', 'chesca@gmail.com', '$2y$10$XN3M5MPJ8j/J99zrNQrlAuAz.coMsB3n.LMjmcG0KnfapIK/ysDIW', 'Student', 'Enrolled', 2, '2025-09-12 20:35:58', '2025-09-22 18:01:24', 0),
-(1010, 'joshivan', 'jcdavid123c@gmail.com', '$2y$10$gpZu.yQi6LBq3rk.1MG29uRYtGs07M6XXH8vZ9.Ph0aG1tpMbWg4O', 'Student', 'Enrolled', 2, '2025-09-15 23:41:30', '2025-09-27 12:21:24', 0),
-(1011, 'nicarosales', 'rosaleschesca1@gmail.com', '$2y$10$aOKQ0dmEVGsBBpGcx07Hz.ejxZr20cg5N.jyK3sBWHaBxXgKdKSMK', 'Student', 'Enrolled', 2, '2025-09-29 15:45:25', '2025-09-29 16:04:15', 0);
+INSERT INTO `tbl_account` (`acc_id`, `username`, `email`, `password`, `role`, `enrollment_status`, `reg_acc_status`, `date_registered`, `date_enrolled`, `email_verified`, `device_login`) VALUES
+(1, 'admin', 'jcdavid@gmail.com', '$2y$10$Z5JPFdmQq5vRcI10R0UqbOpjx9lAmjgl74Le3scj53aRAodx9a2IO', 'Admin', 'Not Enrolled', 2, '2025-09-12 20:35:58', NULL, 0, 'None'),
+(2, 'juancruz', 'jcdavid5777qc@gmail.com', 'stud123', 'Student', 'Not Enrolled', 1, '2025-09-12 20:35:58', NULL, 0, 'None'),
+(3, 'anasantos', 'jcdavid3@gmail.com', 'stud123', 'Student', 'Not Enrolled', 1, '2025-09-12 20:35:58', NULL, 0, 'None'),
+(1002, 'chesca', 'chesca@gmail.com', '$2y$10$XN3M5MPJ8j/J99zrNQrlAuAz.coMsB3n.LMjmcG0KnfapIK/ysDIW', 'Student', 'Enrolled', 2, '2025-09-12 20:35:58', '2025-09-22 18:01:24', 0, 'None'),
+(1010, 'joshivan', 'jcdavid123c@gmail.com', '$2y$10$vonxPEgJTmCvAZxxGhbEp.G2842cZO4MNlXeCXO2wwtsWyPFR29TC', 'Student', 'Enrolled', 2, '2025-09-15 23:41:30', '2025-09-27 12:21:24', 0, 'None'),
+(1011, 'nicarosales', 'rosaleschesca1@gmail.com', '$2y$10$aOKQ0dmEVGsBBpGcx07Hz.ejxZr20cg5N.jyK3sBWHaBxXgKdKSMK', 'Student', 'Enrolled', 2, '2025-09-29 15:45:25', '2025-09-29 16:04:15', 0, 'None');
 
 -- --------------------------------------------------------
 
@@ -93,7 +94,16 @@ INSERT INTO `tbl_audit_log` (`log_id`, `acc_id`, `activity`, `log_date`) VALUES
 (21, 1, 'Transferred student (Acc ID: 1002) from section ID 4 to section ID 3. Reason: Section transfer', '2025-09-27 21:53:29'),
 (22, 1, 'Updated registration status for student (Acc ID: 1011) from 1 to 2', '2025-09-29 15:46:54'),
 (23, 1, 'Added new section: Kinder 1 - Rizal (Level ID: 1, Capacity: 25)', '2025-09-29 16:03:02'),
-(24, 1, 'Deleted section: Kinder 1 - Rizal (ID: 16)', '2025-09-29 16:03:15');
+(24, 1, 'Deleted section: Kinder 1 - Rizal (ID: 16)', '2025-09-29 16:03:15'),
+(25, 1, 'Updated payment ID 6 with amount ₱2,000.00', '2025-10-11 18:22:47'),
+(26, 1, 'Updated payment ID 6 with amount ₱2,000.00', '2025-10-12 21:13:23'),
+(27, 1, 'Updated registration status for student (Acc ID: 2) from 1 to 0', '2025-10-12 23:06:53'),
+(28, 1, 'Updated registration status for student (Acc ID: 2) from 1 to 0', '2025-10-12 23:10:21'),
+(29, 1, 'Updated registration status for student (Acc ID: 2) from 1 to 0', '2025-10-12 23:11:52'),
+(30, 1, 'Updated registration status for student (Acc ID: 2) from 1 to 0', '2025-10-12 23:14:05'),
+(31, 1, 'Updated registration status for student (Acc ID: 2) from 1 to 0', '2025-10-12 23:15:50'),
+(32, 1, 'Updated registration status for student (Acc ID: 2) from 1 to 2', '2025-10-12 23:16:48'),
+(33, 1, 'Added payment ID 7 of amount 2000 for enrollment ID 5', '2025-10-18 14:43:23');
 
 -- --------------------------------------------------------
 
@@ -231,7 +241,7 @@ INSERT INTO `tbl_parents_details` (`parent_id`, `child_id`, `parent_full_name`, 
 (1, 1, 'Maria Cruz', '09171234567', 'Mother', 'No provided link', ''),
 (2, 2, 'Jose Santos', '09182345678', 'Father', 'No provided link', ''),
 (3, 1002, 'Nida Rosales', '09762096892', 'Mother', 'No provided link', ''),
-(4, 1003, 'Josh Ivan', '09565535401', 'Father', 'https://www.facebook.com/jcdiff123', '68c8339b9c9a7_1757950875.jpeg'),
+(4, 1003, 'Josh Ivan', '09565535401', 'Father', 'https://www.facebook.com/jcdiff123', 'parent_id_1003_1760193114.jpg'),
 (5, 1004, 'Nida Franco', '09565535401', 'Mother', '', '68da38edb64e5_1759131885.jpg');
 
 -- --------------------------------------------------------
@@ -255,7 +265,8 @@ CREATE TABLE `tbl_payments` (
 
 INSERT INTO `tbl_payments` (`payment_id`, `enrollment_id`, `amount`, `payment_date`, `method`, `remarks`) VALUES
 (4, 3, 18000.00, '2025-09-15 22:30:00', 'Cash', 'Payment'),
-(6, 5, 2000.00, '2025-09-16 14:45:00', 'Cash', NULL);
+(6, 5, 2000.00, '2025-09-16 14:45:00', 'Cash', NULL),
+(7, 5, 2000.00, '2025-10-18 06:42:00', 'Cash', NULL);
 
 -- --------------------------------------------------------
 
@@ -276,7 +287,8 @@ CREATE TABLE `tbl_payment_details` (
 
 INSERT INTO `tbl_payment_details` (`payment_detail_id`, `payment_id`, `fee_type`, `amount`) VALUES
 (5, 4, 'Monthly', 18000.00),
-(7, 6, 'Miscellaneous', 2000.00);
+(7, 6, 'Miscellaneous', 2000.00),
+(8, 7, 'Monthly', 2000.00);
 
 -- --------------------------------------------------------
 
@@ -292,19 +304,20 @@ CREATE TABLE `tbl_personal_details` (
   `last_name` varchar(50) NOT NULL,
   `date_of_birth` date NOT NULL,
   `gender` enum('Male','Female','Other') NOT NULL,
-  `address` varchar(100) NOT NULL
+  `address` varchar(100) NOT NULL,
+  `profile_picture` varchar(255) DEFAULT 'None'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tbl_personal_details`
 --
 
-INSERT INTO `tbl_personal_details` (`personal_id`, `acc_id`, `first_name`, `middle_name`, `last_name`, `date_of_birth`, `gender`, `address`) VALUES
-(1, 2, 'Juan', 'Dela', 'Cruz', '2017-05-12', 'Male', 'Quezon City'),
-(2, 3, 'Ana', 'Lopez', 'Santos', '2015-09-21', 'Female', 'Manila City'),
-(1002, 1002, 'Chesca', NULL, 'Rosales', '2022-04-21', 'Female', 'Kaligayahan QC'),
-(1003, 1010, 'Ivan', '', 'Inocencio', '2022-05-21', 'Male', 'Bahay'),
-(1004, 1011, 'Nica', '', 'Rosales', '2020-01-19', 'Female', 'Bistekville');
+INSERT INTO `tbl_personal_details` (`personal_id`, `acc_id`, `first_name`, `middle_name`, `last_name`, `date_of_birth`, `gender`, `address`, `profile_picture`) VALUES
+(1, 2, 'Juan', 'Dela', 'Cruz', '2017-05-12', 'Male', 'Quezon City', ''),
+(2, 3, 'Ana', 'Lopez', 'Santos', '2015-09-21', 'Female', 'Manila City', ''),
+(1002, 1002, 'Chesca', '', 'Rosales', '2022-04-21', 'Female', 'Kaligayahan QC', 'profile_1002_1760190575.jpg'),
+(1003, 1010, 'Ivan', '', 'Inocencio', '2022-05-21', 'Male', 'Bahay', ''),
+(1004, 1011, 'Nica', '', 'Rosales', '2020-01-19', 'Female', 'Bistekville', '');
 
 -- --------------------------------------------------------
 
@@ -410,7 +423,7 @@ CREATE TABLE `tbl_student_transferee` (
 --
 
 INSERT INTO `tbl_student_transferee` (`std_id`, `personal_id`, `prev_school`, `prev_address_school`, `prev_id_school_file`, `prev_school_card`, `level_id`, `section_id`) VALUES
-(1, 1002, 'Bayan Glori Elementary School', 'Bayan Glori', 'id_68c9035bd5c28.jpg', 'school_card_68c9035bd5e81.jpg', 3, 3);
+(1, 1002, 'Bayan Glori Elementary School', 'Bayan Glori', 'id_68c9035bd5c28.jpg', 'school_card_68c9035bd5e81.jpg', 3, NULL);
 
 --
 -- Indexes for dumped tables
@@ -531,7 +544,7 @@ ALTER TABLE `tbl_account`
 -- AUTO_INCREMENT for table `tbl_audit_log`
 --
 ALTER TABLE `tbl_audit_log`
-  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT for table `tbl_dropout_transfer_reasons`
@@ -573,13 +586,13 @@ ALTER TABLE `tbl_parents_details`
 -- AUTO_INCREMENT for table `tbl_payments`
 --
 ALTER TABLE `tbl_payments`
-  MODIFY `payment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `payment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `tbl_payment_details`
 --
 ALTER TABLE `tbl_payment_details`
-  MODIFY `payment_detail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `payment_detail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `tbl_personal_details`

@@ -473,6 +473,21 @@ while ($row = $years_result->fetch_assoc()) {
         </div>
     </div>
 
+    <!-- Full Image Modal -->
+    <div class="modal fade" id="fullImageModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="fullImageModalLabel">Full Image View</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img id="fullImage" src="" class="img-fluid" alt="Full Image" style="max-height: 80vh;">
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         class StudentManager {
             constructor() {
@@ -639,7 +654,7 @@ while ($row = $years_result->fetch_assoc()) {
                             <small class="text-muted">@${student.username}</small>
                         </td>
                         <td>
-                            <span class="badge bg-info">${student.grade_level || 'Not Set'}</span>
+                            <span class="badge bg-info">${student.current_grade_level || 'Not Set'}</span>
                         </td>
                         <td>
                             <span class="badge ${statusBadgeClass}">${student.enrollment_status}</span>
@@ -1067,6 +1082,7 @@ while ($row = $years_result->fetch_assoc()) {
                 if (!student) return;
 
                 const isTransferee = student.student_type === 'Transferee';
+                console.log(student);
 
                 document.getElementById('editModalContent').innerHTML = `
                     <form id="editStudentForm">
@@ -1100,7 +1116,7 @@ while ($row = $years_result->fetch_assoc()) {
                                 <select class="form-select" name="level_id" readonly>
                                     <option value="">Select Grade Level</option>
                                     ${this.gradeLevels.map(level => 
-                                        `<option value="${level.fee_id}" ${student.level_id == level.fee_id ? 'selected' : ''}>${level.level}</option>`
+                                        `<option value="${level.fee_id}" ${student.current_level_id == level.fee_id ? 'selected' : ''}>${level.level}</option>`
                                     ).join('')}
                                 </select>
                             </div>
@@ -1234,6 +1250,14 @@ while ($row = $years_result->fetch_assoc()) {
                 });
             }
         }
+
+        function viewFullImage(imageSrc, imageTitle) {
+            document.getElementById('fullImage').src = imageSrc;
+            document.getElementById('fullImageModalLabel').textContent = imageTitle;
+            const fullImageModal = new bootstrap.Modal(document.getElementById('fullImageModal'));
+            fullImageModal.show();
+        }
+
         const studentManager = new StudentManager();
         studentManager.fetchStudents();
     </script>

@@ -19,7 +19,7 @@ if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "Student") {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../styles/general.css">
     <link rel="stylesheet" href="../styles/sidebar.css">
-    <title>Fonthills Christian School - FAQs</title>
+    <title>Foothills Christian School - FAQs</title>
     <style>
         /* Main Content */
         .main-content {
@@ -261,7 +261,7 @@ if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "Student") {
                     <div class="accordion-item">
                         <h2 class="accordion-header">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#enroll1">
-                                How do I enroll my child at Fonthills Christian School?
+                                How do I enroll my child at Foothills Christian School?
                             </button>
                         </h2>
                         <div id="enroll1" class="accordion-collapse collapse" data-bs-parent="#enrollmentAccordion">
@@ -570,7 +570,7 @@ if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "Student") {
                     <div class="contact-item">
                         <i class="fas fa-envelope fa-2x mb-2"></i>
                         <h6>Email Us</h6>
-                        <p class="mb-0">info@fonthillschristian.edu.ph</p>
+                        <p class="mb-0">info@foothillschristian.edu.ph</p>
                     </div>
                 </div>
                 <div class="col-md-4">

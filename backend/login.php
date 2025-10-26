@@ -5,6 +5,7 @@
     if(isset($_POST["loginEmail"]) && isset($_POST["loginPassword"])) {
         $loginEmail = $_POST["loginEmail"];
         $loginPassword = $_POST["loginPassword"];
+        $rememberMe = isset($_POST["rememberMe"]) ? true : false;
 
         // check if email or username exists
         $checkUserQuery = "SELECT * FROM tbl_account WHERE email = ? OR username = ?";
@@ -30,6 +31,28 @@
                     $_SESSION["email"] = $user["email"];
                     $_SESSION["role"] = $user["role"];
                     $_SESSION["enrollment_status"] = $user["enrollment_status"];
+
+                    // check first if the user use email or username to login
+                    $logInUsed = '';
+                    if($loginEmail == $user["email"]){
+                        $logInUsed = $user["email"];
+                    } else {
+                        $logInUsed = $user["username"];
+                    }
+
+                    if($rememberMe){
+                        // save username and password in cookies for 30 days
+                        setcookie("logInUsed", $logInUsed, time() + (30 * 24 * 60 * 60), "/");
+                        setcookie("loginPassword", $loginPassword, time() + (30 * 24 * 60 * 60), "/");
+                    }else{
+                        // clear cookies if exist
+                        if(isset($_COOKIE["logInUsed"])){
+                            setcookie("logInUsed", "", time() - 3600, "/");
+                        }
+                        if(isset($_COOKIE["loginPassword"])){
+                            setcookie("loginPassword", "", time() - 3600, "/");
+                        }
+                    }
 
                     echo json_encode(["success" => true, "message" => "Login successful.", "role" => $user["role"]]);
                 }else{

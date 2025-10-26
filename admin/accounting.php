@@ -3,7 +3,7 @@
 session_start();
 require_once "../backend/config.php";
 
-if($_SESSION["role"] !== "Admin"){
+if ($_SESSION["role"] !== "Admin") {
     header("Location: ../components/logout.php");
     exit;
 }
@@ -317,17 +317,29 @@ while ($row = $enrollments_result->fetch_assoc()) {
                 <div class="stat-number" id="monthlyRevenue">₱0</div>
                 <div class="stat-label">This Month</div>
             </div>
-            <div class="stat-card warning">
-                <div class="stat-number" id="totalPayments">0</div>
-                <div class="stat-label">Total Payments</div>
-            </div>
             <div class="stat-card info">
                 <div class="stat-number" id="avgPayment">₱0</div>
                 <div class="stat-label">Avg Payment</div>
             </div>
-            <div class="stat-card purple">
-                <div class="stat-number" id="activeEnrollments">0</div>
-                <div class="stat-label">Active Enrollments</div>
+        </div>
+
+        <!-- Balance Statistics -->
+        <div class="stats-grid" id="balanceStatsContainer">
+            <div class="stat-card primary">
+                <div class="stat-number" id="balanceTotalExpected">₱0</div>
+                <div class="stat-label">Total Expected</div>
+            </div>
+            <div class="stat-card success">
+                <div class="stat-number" id="balanceTotalCollected">₱0</div>
+                <div class="stat-label">Total Collected</div>
+            </div>
+            <div class="stat-card warning">
+                <div class="stat-number" id="balanceTotalOutstanding">₱0</div>
+                <div class="stat-label">Outstanding Balance</div>
+            </div>
+            <div class="stat-card info">
+                <div class="stat-number" id="balanceUnpaidCount">0</div>
+                <div class="stat-label">Unpaid Students</div>
             </div>
         </div>
 
@@ -358,10 +370,99 @@ while ($row = $enrollments_result->fetch_assoc()) {
             <div style="height: 400px;">
                 <canvas id="incomeChart"></canvas>
             </div>
+
+        </div>
+
+
+
+
+
+        <!-- Student Balances Section -->
+        <div class="filter-card">
+            <h6><i class="fas fa-filter"></i>Filter Student Balances</h6>
+            <div class="row g-3" id="balanceFilterForm">
+                <div class="col-md-3">
+                    <label class="form-label">Grade Level</label>
+                    <select class="form-select" id="balanceGradeFilter">
+                        <option value="all">All Grades</option>
+                        <?php
+                        $grades_query = "SELECT fee_id, level FROM tbl_fees ORDER BY level";
+                        $grades_result = $conn->query($grades_query);
+                        while ($grade = $grades_result->fetch_assoc()):
+                        ?>
+                            <option value="<?php echo $grade['fee_id']; ?>"><?php echo $grade['level']; ?></option>
+                        <?php endwhile; ?>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Payment Status</label>
+                    <select class="form-select" id="balancePaymentStatusFilter">
+                        <option value="all">All Status</option>
+                        <option value="unpaid">Unpaid</option>
+                        <option value="partial">Partially Paid</option>
+                        <option value="full">Fully Paid</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Search Student</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="balanceSearch" placeholder="Student name...">
+                        <button class="btn btn-primary" type="button" id="balanceSearchBtn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">&nbsp;</label>
+                    <div>
+                        <button class="btn btn-outline-secondary w-100" id="balanceResetBtn">
+                            <i class="fas fa-refresh"></i> Reset
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Student Balances Table -->
+        <div class="table-card position-relative">
+            <div class="loading-overlay" id="balanceLoadingOverlay">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+
+            <div class="table-header">
+                <h5 id="balanceTableTitle"><i class="fas fa-wallet"></i>Student Balances (0 students)</h5>
+                <div class="btn-group">
+                    <button class="btn btn-success" onclick="accountingManager.exportBalances()">
+                        <i class="fas fa-download me-1"></i>Export CSV
+                    </button>
+                    <button type="button" class="btn btn-success dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="visually-hidden">Toggle Dropdown</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#" onclick="accountingManager.exportBalances(); return false;">
+                                <i class="fas fa-file-csv me-2"></i>Export as CSV
+                            </a></li>
+                        <li><a class="dropdown-item" href="#" onclick="accountingManager.printBalances(); return false;">
+                                <i class="fas fa-print me-2"></i>Print Report
+                            </a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div id="balanceTableContainer">
+                <!-- Table content will be loaded here -->
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination-container" id="balancePaginationContainer">
+                <!-- Pagination will be loaded here -->
+            </div>
         </div>
 
         <!-- Payment History Filters -->
-        <div class="filter-card">
+        <div class="filter-card mt-4">
             <h6><i class="fas fa-filter"></i>Filter Payment History</h6>
             <div class="row g-3" id="filterForm">
                 <div class="col-md-2">
@@ -535,8 +636,13 @@ while ($row = $enrollments_result->fetch_assoc()) {
                 this.total_records = 0;
                 this.chart = null;
                 this.enrollments = <?php echo json_encode($enrollments); ?>;
+                this.balance_current_page = 1;
+                this.balance_records_per_page = 10;
+                this.balances = [];
+                this.balance_total_records = 0;
                 this.init();
             }
+
 
             async init() {
                 await Promise.all([
@@ -544,6 +650,7 @@ while ($row = $enrollments_result->fetch_assoc()) {
                     this.fetchStats(),
                     this.initChart()
                 ]);
+                this.fetchStudentBalances();
                 this.initEventListeners();
                 this.setDefaultDateTime();
             }
@@ -588,6 +695,30 @@ while ($row = $enrollments_result->fetch_assoc()) {
                 document.getElementById('addPaymentForm').addEventListener('submit', (e) => {
                     e.preventDefault();
                     this.savePayment();
+                });
+
+                // Balance filter events
+                ['balanceGradeFilter', 'balancePaymentStatusFilter'].forEach(id => {
+                    document.getElementById(id).addEventListener('change', () => {
+                        this.balance_current_page = 1;
+                        this.fetchStudentBalances();
+                    });
+                });
+
+                document.getElementById('balanceSearchBtn').addEventListener('click', () => {
+                    this.balance_current_page = 1;
+                    this.fetchStudentBalances();
+                });
+
+                document.getElementById('balanceSearch').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.balance_current_page = 1;
+                        this.fetchStudentBalances();
+                    }
+                });
+
+                document.getElementById('balanceResetBtn').addEventListener('click', () => {
+                    this.resetBalanceFilters();
                 });
             }
 
@@ -670,9 +801,9 @@ while ($row = $enrollments_result->fetch_assoc()) {
             updateStatsDisplay(stats) {
                 document.getElementById('totalRevenue').textContent = `₱${this.formatNumber(stats.total_revenue)}`;
                 document.getElementById('monthlyRevenue').textContent = `₱${this.formatNumber(stats.monthly_revenue)}`;
-                document.getElementById('totalPayments').textContent = this.formatNumber(stats.total_payments);
                 document.getElementById('avgPayment').textContent = `₱${this.formatNumber(stats.avg_payment)}`;
-                document.getElementById('activeEnrollments').textContent = this.formatNumber(stats.active_enrollments);
+
+                console.log(stats);
             }
 
             renderPaymentList() {
@@ -1235,6 +1366,469 @@ while ($row = $enrollments_result->fetch_assoc()) {
                     'Monthly': 'bg-info'
                 };
                 return feeTypeClasses[feeType] || 'bg-secondary';
+            }
+
+            async fetchStudentBalances() {
+                try {
+                    this.showLoading(true, 'balanceLoadingOverlay');
+
+                    const params = new URLSearchParams({
+                        page: this.balance_current_page,
+                        limit: this.balance_records_per_page,
+                        grade: document.getElementById('balanceGradeFilter')?.value || 'all',
+                        payment_status: document.getElementById('balancePaymentStatusFilter')?.value || 'all',
+                        search: document.getElementById('balanceSearch')?.value || ''
+                    });
+
+                    const response = await fetch(`./student_lists/get_student_balances.php?${params}`);
+                    const data = await response.json();
+
+                    if (data.success) {
+                        this.balances = data.balances || [];
+                        this.balance_total_records = data.pagination.total_records || 0;
+
+                        this.renderBalanceList();
+                        this.renderBalancePagination(data.pagination);
+                        this.updateBalanceStats(data.stats);
+                    } else {
+                        throw new Error('Failed to fetch balances');
+                    }
+                } catch (error) {
+                    console.error('Error fetching balances:', error);
+                    this.renderBalanceError();
+                } finally {
+                    this.showLoading(false, 'balanceLoadingOverlay');
+                }
+            }
+
+            updateBalanceStats(stats) {
+                document.getElementById('balanceTotalExpected').textContent = `₱${stats.total_expected}`;
+                document.getElementById('balanceTotalCollected').textContent = `₱${stats.total_collected}`;
+                document.getElementById('balanceTotalOutstanding').textContent = `₱${stats.total_outstanding}`;
+                document.getElementById('balanceUnpaidCount').textContent = stats.unpaid_count;
+            }
+
+            renderBalanceList() {
+                const container = document.getElementById('balanceTableContainer');
+                const title = document.getElementById('balanceTableTitle');
+
+                title.innerHTML = `<i class="fas fa-wallet"></i>Student Balances (${this.balance_total_records} students)`;
+
+                if (this.balances.length === 0) {
+                    container.innerHTML = `
+                        <div class="no-results">
+                            <i class="fas fa-wallet"></i>
+                            <h4>No balances found</h4>
+                            <p>No student balances match your current filter criteria.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                let tableHTML = `
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Student Name</th>
+                                    <th>Grade Level</th>
+                                    <th>Parent Contact</th>
+                                    <th>Total Fee</th>
+                                    <th>Paid Amount</th>
+                                    <th>Balance</th>
+                                    <th>Status</th>
+                                    <th>Progress</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+
+                this.balances.forEach(balance => {
+                    tableHTML += this.renderBalanceRow(balance);
+                });
+
+                tableHTML += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+
+                container.innerHTML = tableHTML;
+            }
+
+            renderBalanceRow(balance) {
+                const statusBadgeClass = this.getPaymentStatusBadgeClass(balance.payment_status);
+                const progressColor = this.getProgressColor(balance.payment_percentage);
+
+                return `
+                    <tr>
+                        <td>
+                            <div class="fw-bold">${balance.full_name}</div>
+                            <small class="text-muted">${balance.school_year}</small>
+                        </td>
+                        <td>${balance.current_grade_level}</td>
+                        <td>
+                            <div>${balance.parent_full_name || 'N/A'}</div>
+                            <small class="text-muted">${balance.contact_num || 'N/A'}</small>
+                        </td>
+                        <td><span class="fw-bold">₱${balance.total_fee}</span></td>
+                        <td><span class="text-success">₱${balance.total_paid}</span></td>
+                        <td><span class="fw-bold text-danger">₱${balance.remaining_balance}</span></td>
+                        <td>
+                            <span class="badge ${statusBadgeClass}">${balance.payment_status}</span>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="progress flex-grow-1" style="height: 20px;">
+                                    <div class="progress-bar ${progressColor}" 
+                                         role="progressbar" 
+                                         style="width: ${balance.payment_percentage}%"
+                                         aria-valuenow="${balance.payment_percentage}" 
+                                         aria-valuemin="0" 
+                                         aria-valuemax="100">
+                                    </div>
+                                </div>
+                                <span class="text-muted" style="min-width: 45px;">${balance.payment_percentage}%</span>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }
+
+            renderBalancePagination(pagination) {
+                const container = document.getElementById('balancePaginationContainer');
+
+                if (pagination.total_pages <= 1) {
+                    container.innerHTML = '';
+                    return;
+                }
+
+                let paginationHTML = `
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="text-muted">
+                            Showing ${((pagination.current_page - 1) * pagination.per_page) + 1} to 
+                            ${Math.min(pagination.current_page * pagination.per_page, pagination.total_records)} of 
+                            ${pagination.total_records} entries
+                        </div>
+                        <nav>
+                            <ul class="pagination pagination-sm mb-0">
+                `;
+
+                paginationHTML += `
+                    <li class="page-item ${!pagination.has_prev ? 'disabled' : ''}">
+                        <button class="page-link" onclick="accountingManager.goToBalancePage(${pagination.current_page - 1})" ${!pagination.has_prev ? 'disabled' : ''}>
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                    </li>
+                `;
+
+                const startPage = Math.max(1, pagination.current_page - 2);
+                const endPage = Math.min(pagination.total_pages, pagination.current_page + 2);
+
+                if (startPage > 1) {
+                    paginationHTML += `
+                        <li class="page-item">
+                            <button class="page-link" onclick="accountingManager.goToBalancePage(1)">1</button>
+                        </li>
+                    `;
+                    if (startPage > 2) {
+                        paginationHTML += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+                    }
+                }
+
+                for (let i = startPage; i <= endPage; i++) {
+                    paginationHTML += `
+                        <li class="page-item ${i === pagination.current_page ? 'active' : ''}">
+                            <button class="page-link" onclick="accountingManager.goToBalancePage(${i})">${i}</button>
+                        </li>
+                    `;
+                }
+
+                if (endPage < pagination.total_pages) {
+                    if (endPage < pagination.total_pages - 1) {
+                        paginationHTML += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+                    }
+                    paginationHTML += `
+                        <li class="page-item">
+                            <button class="page-link" onclick="accountingManager.goToBalancePage(${pagination.total_pages})">${pagination.total_pages}</button>
+                        </li>
+                    `;
+                }
+
+                paginationHTML += `
+                    <li class="page-item ${!pagination.has_next ? 'disabled' : ''}">
+                        <button class="page-link" onclick="accountingManager.goToBalancePage(${pagination.current_page + 1})" ${!pagination.has_next ? 'disabled' : ''}>
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </li>
+                `;
+
+                paginationHTML += `
+                            </ul>
+                        </nav>
+                    </div>
+                `;
+
+                container.innerHTML = paginationHTML;
+            }
+
+            goToBalancePage(page) {
+                if (page >= 1 && page <= Math.ceil(this.balance_total_records / this.balance_records_per_page)) {
+                    this.balance_current_page = page;
+                    this.fetchStudentBalances();
+                }
+            }
+
+            resetBalanceFilters() {
+                document.getElementById('balanceGradeFilter').value = 'all';
+                document.getElementById('balancePaymentStatusFilter').value = 'all';
+                document.getElementById('balanceSearch').value = '';
+                this.balance_current_page = 1;
+                this.fetchStudentBalances();
+            }
+
+            renderBalanceError() {
+                const container = document.getElementById('balanceTableContainer');
+                container.innerHTML = `
+                    <div class="no-results">
+                        <i class="fas fa-exclamation-triangle text-warning"></i>
+                        <h4>Error Loading Balances</h4>
+                        <p>There was an error loading the balance data. Please try again.</p>
+                        <button class="btn btn-primary" onclick="accountingManager.fetchStudentBalances()">
+                            Retry
+                        </button>
+                    </div>
+                `;
+            }
+
+            getPaymentStatusBadgeClass(status) {
+                const statusClasses = {
+                    'Unpaid': 'bg-danger',
+                    'Partially Paid': 'bg-warning',
+                    'Fully Paid': 'bg-success'
+                };
+                return statusClasses[status] || 'bg-secondary';
+            }
+
+            getProgressColor(percentage) {
+                if (percentage >= 100) return 'bg-success';
+                if (percentage >= 50) return 'bg-warning';
+                return 'bg-danger';
+            }
+
+            printBalances() {
+                // Get current data
+                if (this.balances.length === 0) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'No Data',
+                        text: 'No balance records to print.'
+                    });
+                    return;
+                }
+
+                // Create print window
+                const printWindow = window.open('', '_blank');
+                
+                let tableRows = '';
+                this.balances.forEach(balance => {
+                    tableRows += `
+                        <tr>
+                            <td>${balance.full_name}</td>
+                            <td>${balance.current_grade_level}</td>
+                            <td>${balance.parent_full_name || 'N/A'}</td>
+                            <td>₱${balance.total_fee}</td>
+                            <td>₱${balance.total_paid}</td>
+                            <td>₱${balance.remaining_balance}</td>
+                            <td>${balance.payment_status}</td>
+                        </tr>
+                    `;
+                });
+
+                const currentDate = new Date().toLocaleString();
+                const totalRecords = this.balance_total_records;
+
+                const htmlContent = `
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>Student Balances Report</title>
+                        <style>
+                            body { 
+                                font-family: Arial, sans-serif; 
+                                padding: 20px;
+                            }
+                            .header {
+                                text-align: center;
+                                margin-bottom: 30px;
+                            }
+                            .header h1 {
+                                margin: 0;
+                                color: #2c3e50;
+                            }
+                            .header p {
+                                margin: 5px 0;
+                                color: #64748b;
+                            }
+                            table {
+                                width: 100%;
+                                border-collapse: collapse;
+                                margin-top: 20px;
+                            }
+                            th, td {
+                                border: 1px solid #ddd;
+                                padding: 8px;
+                                text-align: left;
+                            }
+                            th {
+                                background-color: #2c3e50;
+                                color: white;
+                            }
+                            tr:nth-child(even) {
+                                background-color: #f8fafc;
+                            }
+                            .footer {
+                                margin-top: 30px;
+                                text-align: center;
+                                color: #64748b;
+                                font-size: 12px;
+                            }
+                            @media print {
+                                button { display: none; }
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="header">
+                            <h1>Student Balances Report</h1>
+                            <p>Generated on ${currentDate}</p>
+                            <p>Total Records: ${totalRecords}</p>
+                        </div>
+                        
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Student Name</th>
+                                    <th>Grade Level</th>
+                                    <th>Parent Name</th>
+                                    <th>Total Fee</th>
+                                    <th>Paid Amount</th>
+                                    <th>Balance</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${tableRows}
+                            </tbody>
+                        </table>
+                        
+                        <div class="footer">
+                            <p>This is a computer-generated report.</p>
+                        </div>
+                    </body>
+                    </html>
+                `;
+                
+                printWindow.document.write(htmlContent);
+                printWindow.document.close();
+                
+                // Trigger print after content loads
+                printWindow.onload = function() {
+                    printWindow.print();
+                };
+            }
+            
+
+            async exportBalances() {
+                // Show confirmation dialog
+                const result = await Swal.fire({
+                    icon: 'question',
+                    title: 'Export Student Balances',
+                    html: `
+                        <p>This will export all student balance records matching your current filters to a CSV file.</p>
+                        <p class="text-muted mb-0">Current filters will be applied to the export.</p>
+                    `,
+                    showCancelButton: true,
+                    confirmButtonText: '<i class="fas fa-download me-1"></i>Export CSV',
+                    confirmButtonColor: '#28a745',
+                    cancelButtonText: 'Cancel'
+                });
+
+                if (result.isConfirmed) {
+                    try {
+                        // Show loading
+                        Swal.fire({
+                            title: 'Preparing Export...',
+                            html: 'Please wait while we generate your CSV file.',
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+
+                        // Get current filter values
+                        const params = new URLSearchParams({
+                            grade: document.getElementById('balanceGradeFilter')?.value || 'all',
+                            payment_status: document.getElementById('balancePaymentStatusFilter')?.value || 'all',
+                            search: document.getElementById('balanceSearch')?.value || ''
+                        });
+
+                        // Create a temporary link to trigger download
+                        const exportUrl = `./students/export_balances.php?${params}`;
+
+                        // Use fetch to check if the request is successful
+                        const response = await fetch(exportUrl);
+
+                        if (response.ok) {
+                            // Create blob from response
+                            const blob = await response.blob();
+
+                            // Create download link
+                            const url = window.URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.style.display = 'none';
+                            a.href = url;
+
+                            // Get filename from Content-Disposition header or use default
+                            const contentDisposition = response.headers.get('Content-Disposition');
+                            let filename = 'student_balances_' + new Date().toISOString().slice(0, 10) + '.csv';
+
+                            if (contentDisposition) {
+                                const filenameMatch = contentDisposition.match(/filename="?(.+)"?/);
+                                if (filenameMatch) {
+                                    filename = filenameMatch[1];
+                                }
+                            }
+
+                            a.download = filename;
+                            document.body.appendChild(a);
+                            a.click();
+
+                            // Cleanup
+                            window.URL.revokeObjectURL(url);
+                            document.body.removeChild(a);
+
+                            // Show success message
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Export Successful',
+                                text: 'Your CSV file has been downloaded successfully.',
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+                        } else {
+                            throw new Error('Export failed');
+                        }
+                    } catch (error) {
+                        console.error('Error exporting balances:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Export Failed',
+                            text: 'An error occurred while exporting the data. Please try again.'
+                        });
+                    }
+                }
             }
         }
 

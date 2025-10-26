@@ -687,8 +687,14 @@ while ($row = $sections_result->fetch_assoc()) {
 
             renderStudentRow(student) {
                 const statusBadgeClass = this.getStatusBadgeClass(student.enrollment_status);
-                const balanceBadge = student.total_balance > 0 ? 'bg-warning' : 'bg-success';
-                const balanceText = student.total_balance > 0 ? `₱${parseFloat(student.total_balance).toLocaleString()}` : 'No Balance';
+                const balanceBadge = student.remaining_balance > 0 ? 'bg-warning' : 'bg-success';
+                const balance = parseFloat(student.remaining_balance.replace(/,/g, ''));
+                const balanceText = balance > 0 
+                ? `₱${balance.toFixed(2)}` 
+                : 'No Balance';
+
+
+                console.log('Rendering student:', student.remaining_balance);
 
                 return `
             <tr>
@@ -710,7 +716,7 @@ while ($row = $sections_result->fetch_assoc()) {
                     <small class="text-muted">@${student.username}</small>
                 </td>
                 <td>
-                    <span class="badge bg-info">${student.grade_level || 'Not Set'}</span>
+                    <span class="badge bg-info">${student.current_grade_level || 'Not Set'}</span>
                 </td>
                 <td>
                     <span class="badge ${statusBadgeClass}">${student.enrollment_status}</span>

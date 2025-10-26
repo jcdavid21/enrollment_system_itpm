@@ -209,7 +209,7 @@ $show_pending_notice = ($student_data['enrollment_status'] == 'Pending');
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz6YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../styles/general.css">
     <link rel="stylesheet" href="../styles/sidebar.css">
-    <title>Fonthills Christian School - Dashboard</title>
+    <title>Foothills Christian School - Dashboard</title>
     <style>
         /* Main Content */
         .main-content {

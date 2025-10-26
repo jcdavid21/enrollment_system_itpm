@@ -78,7 +78,7 @@ try {
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
     $mail->Port       = 587;
 
-    $mail->setFrom('donotreply.fh.qc@gmail.com', 'Fonthills Christian School'); // Change sender
+    $mail->setFrom('donotreply.fh.qc@gmail.com', 'Foothills Christian School'); // Change sender
     $mail->addAddress($student['email'], $student['full_name']);
     
     $mail->Subject = 'Reminder: Outstanding Requirements Submission';

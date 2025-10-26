@@ -1,5 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+<?php 
+
+    $savedEmail = "";
+    $savedPassword = "";
+
+    if(isset($_COOKIE["logInUsed"]) && isset($_COOKIE["loginPassword"])){
+        $savedEmail = $_COOKIE["logInUsed"];
+        $savedPassword = $_COOKIE["loginPassword"];
+    }
+
+?>
 
 <head>
     <meta charset="UTF-8">
@@ -11,7 +22,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-    <title>Fonthills Christian School - Login</title>
+    <title>Foothills Christian School - Login</title>
     <style>
         .page-container {
             min-height: 100vh;
@@ -201,7 +212,7 @@
                                         <div id="loginForm">
                                             <div class="d-flex align-items-center mb-3 pb-1">
                                                 <i class="fas fa-cubes fa-2x me-3" style="color: #0c7c51;"></i>
-                                                <span class="h4 fw-semibold mb-0">Fonthills Christian School Q.C.</span>
+                                                <span class="h4 fw-semibold mb-0">Foothills Christian School Q.C.</span>
                                             </div>
 
                                             <h5 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">Sign into your account</h5>
@@ -209,17 +220,28 @@
                                             <div class="form-outline mb-4">
                                                 <label class="form-label" for="loginEmail">Email address / Username</label>
                                                 <input type="text" id="loginEmail"
-                                                    name="loginEmail" class="form-control form-control-lg" required />
+                                                    name="loginEmail" class="form-control form-control-lg"
+                                                    value="<?php echo htmlspecialchars($savedEmail); ?>"
+                                                    required />
                                             </div>
 
                                             <div class="form-outline mb-4">
                                                 <label class="form-label" for="loginPassword">Password</label>
                                                 <div class="input-group">
-                                                    <input type="password" id="loginPassword" name="loginPassword" class="form-control form-control-lg" required />
+                                                    <input type="password" id="loginPassword" name="loginPassword" class="form-control form-control-lg"
+                                                        value="<?php echo htmlspecialchars($savedPassword); ?>"
+                                                        required />
                                                     <button class="btn btn-outline-secondary" type="button" id="toggleLoginPassword">
                                                         <i class="fas fa-eye"></i>
                                                     </button>
                                                 </div>
+                                            </div>
+                                            <!-- remember me -->
+                                            <div class="form-check mb-4">
+                                                <input class="form-check-input" type="checkbox" value="" id="rememberMe" name="rememberMe"
+                                                <?php if(isset($_COOKIE["logInUsed"])) echo "checked"; ?>
+                                                />
+                                                <label class="form-check-label" for="rememberMe">Remember me</label>
                                             </div>
 
                                             <div class="pt-1 mb-4">
@@ -438,7 +460,7 @@
                 <div class="modal-body">
                     <div class="terms-content">
                         <h6 class="fw-bold text-primary-custom">1. ACCEPTANCE OF TERMS</h6>
-                        <p>By registering and enrolling at Fonthills Christian School Q.C., you acknowledge that you have read, understood, and agree to be bound by these Terms and Conditions.</p>
+                        <p>By registering and enrolling at Foothills Christian School Q.C., you acknowledge that you have read, understood, and agree to be bound by these Terms and Conditions.</p>
 
                         <h6 class="fw-bold text-primary-custom">2. ENROLLMENT POLICIES</h6>
                         <p><strong>2.1 Eligibility:</strong> Students must meet age requirements and academic prerequisites for their intended grade level.</p>

@@ -32,13 +32,14 @@ $enrollment_data = null;
 $is_transferee = false;
 $is_new_old = false;
 $show_enrollment_data = false;
+$can_enroll_next_grade = false;
+$current_level_info = null;
 
 // Check if student has enrollment data and is not newly registered
 if ($account_data && $account_data['enrollment_status'] != 'Newly Registered' && $account_data['personal_id']) {
-    $show_enrollment_data = true;
 
     // Check new/old students table
-    $new_old_query = "SELECT nos.*, f.level FROM tbl_new_old_students nos 
+    $new_old_query = "SELECT nos.*, f.level, f.fee_id FROM tbl_new_old_students nos 
                       LEFT JOIN tbl_fees f ON nos.level_id = f.fee_id 
                       WHERE nos.personal_id = ?";
     $stmt = $conn->prepare($new_old_query);
@@ -50,10 +51,15 @@ if ($account_data && $account_data['enrollment_status'] != 'Newly Registered' &&
     if ($new_old_student_data) {
         $is_new_old = true;
         $enrollment_data = $new_old_student_data;
+        $current_level_info = [
+            'current_level_id' => $new_old_student_data['level_id'],
+            'current_level' => $new_old_student_data['level'],
+            'type' => 'new_old'
+        ];
     }
 
     // Check transferee table
-    $transferee_query = "SELECT st.*, f.level FROM tbl_student_transferee st 
+    $transferee_query = "SELECT st.*, f.level, f.fee_id FROM tbl_student_transferee st 
                          LEFT JOIN tbl_fees f ON st.level_id = f.fee_id 
                          WHERE st.personal_id = ?";
     $stmt = $conn->prepare($transferee_query);
@@ -65,6 +71,19 @@ if ($account_data && $account_data['enrollment_status'] != 'Newly Registered' &&
     if ($transferee_data) {
         $is_transferee = true;
         $enrollment_data = $transferee_data;
+        $current_level_info = [
+            'current_level_id' => $transferee_data['level_id'],
+            'current_level' => $transferee_data['level'],
+            'type' => 'transferee'
+        ];
+    }
+
+    // Check if student can enroll for next grade
+    if ($current_level_info && $account_data['enrollment_status'] == 'Not Enrolled') {
+        $can_enroll_next_grade = true;
+        $show_enrollment_data = true;
+    } elseif ($account_data['enrollment_status'] != 'Not Enrolled') {
+        $show_enrollment_data = true;
     }
 }
 ?>
@@ -79,7 +98,7 @@ if ($account_data && $account_data['enrollment_status'] != 'Newly Registered' &&
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../styles/general.css">
     <link rel="stylesheet" href="../styles/sidebar.css">
-    <title>Fonthills Christian School - Enrollment Form</title>
+    <title>Foothills Christian School - Enrollment Form</title>
     <style>
         :root {
             --sidebar-width: 280px;
@@ -436,12 +455,12 @@ if ($account_data && $account_data['enrollment_status'] != 'Newly Registered' &&
             display: none !important;
         }
 
-        .info-item .grade-level{
+        .info-item .grade-level {
             font-size: 18px;
             font-weight: 600;
         }
 
-        #gradeLevelDisplay{
+        #gradeLevelDisplay {
             background: #0a782bff;
             color: white;
         }
@@ -482,13 +501,16 @@ if ($account_data && $account_data['enrollment_status'] != 'Newly Registered' &&
                                 </div>
                             </div>
                         </div>
-                    <?php elseif ($account_data['enrollment_status'] == 'Not Enrolled'): ?>
-                        <div class="alert alert-info">
+                    <?php elseif ($account_data['enrollment_status'] == 'Not Enrolled' && $can_enroll_next_grade): ?>
+                        <div class="alert alert-warning">
                             <div class="d-flex align-items-center">
-                                <i class="fas fa-info-circle me-3 text-info fs-4"></i>
+                                <i class="fas fa-graduation-cap me-3 text-warning fs-4"></i>
                                 <div>
-                                    <h6 class="mb-1 fw-bold">Enrollment Status: Not Enrolled</h6>
-                                    <p class="mb-0">Your enrollment form has been submitted but you are currently not enrolled. Please contact the school administration for more information.</p>
+                                    <h6 class="mb-1 fw-bold">Ready to Enroll for Next Grade Level</h6>
+                                    <p class="mb-2">You have completed <strong><?php echo htmlspecialchars($current_level_info['current_level']); ?></strong> and are eligible to enroll for the next grade level.</p>
+                                    <button class="btn btn-warning btn-sm" onclick="showNextGradeEnrollment()">
+                                        <i class="fas fa-arrow-up me-1"></i>Enroll for Next Grade
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -689,7 +711,7 @@ if ($account_data && $account_data['enrollment_status'] != 'Newly Registered' &&
                             <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
                         </button>
                         <?php if ($account_data['enrollment_status'] == 'Enrolled'): ?>
-                            <button class="btn btn-primary" onclick="window.location.href='files_requirements.php'">
+                            <button class="btn btn-primary" onclick="window.location.href='./files_requirements.php'">
                                 <i class="fas fa-file-alt me-2"></i>View Requirements
                             </button>
                         <?php endif; ?>
@@ -1193,6 +1215,101 @@ if ($account_data && $account_data['enrollment_status'] != 'Newly Registered' &&
                 }
             });
         });
+
+        // Function to show next grade enrollment modal/form
+        function showNextGradeEnrollment() {
+            <?php if ($can_enroll_next_grade && $current_level_info): ?>
+                const currentLevelId = <?php echo $current_level_info['current_level_id']; ?>;
+                const nextLevelId = currentLevelId + 1;
+                const studentType = '<?php echo $current_level_info['type']; ?>';
+
+                // Check if there's a next level (max is Grade 6 = level_id 8)
+                if (nextLevelId > 8) {
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Maximum Grade Level Reached',
+                        text: 'You have completed the highest grade level available (Grade 6).',
+                        confirmButtonText: 'OK'
+                    });
+                    return;
+                }
+
+                Swal.fire({
+                    title: 'Enroll for Next Grade Level',
+                    html: `
+                        <div class="text-start">
+                            <p class="mb-3">You are currently enrolled in <strong><?php echo htmlspecialchars($current_level_info['current_level']); ?></strong></p>
+                            <p class="mb-3">Would you like to proceed with enrollment for the next grade level?</p>
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Your personal and parent information will be carried over. You only need to confirm your enrollment.
+                            </div>
+                        </div>
+                    `,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, Enroll Me',
+                    cancelButtonText: 'Not Now',
+                    confirmButtonColor: '#02541b',
+                    cancelButtonColor: '#6c757d'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        enrollNextGrade(nextLevelId, studentType);
+                    }
+                });
+            <?php endif; ?>
+        }
+
+        function enrollNextGrade(nextLevelId, studentType) {
+            // Show loading
+            Swal.fire({
+                title: 'Processing Enrollment',
+                html: 'Please wait while we process your enrollment...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            // Send AJAX request to enroll for next grade
+            $.ajax({
+                url: '../backend/enroll_next_grade.php',
+                type: 'POST',
+                data: {
+                    next_level_id: nextLevelId,
+                    student_type: studentType
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status === 'success') {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Enrollment Successful',
+                            text: response.message,
+                            confirmButtonText: 'OK',
+                            confirmButtonColor: '#02541b'
+                        }).then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Enrollment Failed',
+                            text: response.message || 'An error occurred during enrollment.'
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Server Error',
+                        text: 'Could not connect to the server. Please try again later.'
+                    });
+                }
+            });
+        }
     </script>
 </body>
 

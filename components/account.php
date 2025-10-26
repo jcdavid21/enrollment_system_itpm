@@ -155,7 +155,7 @@ foreach ($payment_history_by_level as $level_data) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../styles/general.css">
     <link rel="stylesheet" href="../styles/sidebar.css">
-    <title>Fonthills Christian School - My Account</title>
+    <title>Foothills Christian School - My Account</title>
     <style>
         body{
             background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);

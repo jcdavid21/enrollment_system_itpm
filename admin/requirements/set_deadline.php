@@ -72,7 +72,7 @@ try {
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
 
-        $mail->setFrom('donotreply.fh.qc@gmail.com', 'Fonthills Christian School');
+        $mail->setFrom('donotreply.fh.qc@gmail.com', 'Foothills Christian School');
 
         while ($student = $students_result->fetch_assoc()) {
             try {

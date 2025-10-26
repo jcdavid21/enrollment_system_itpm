@@ -3,12 +3,11 @@
 session_start();
 require_once "../backend/config.php";
 
-if($_SESSION["role"] !== "Admin"){
+if ($_SESSION["role"] !== "Admin") {
     header("Location: ../components/logout.php");
     exit;
 }
 
-// Fetch dashboard statistics
 
 // Total students count
 $total_students_query = "SELECT COUNT(*) AS total FROM tbl_account WHERE enrollment_status = 'Enrolled'";
@@ -1052,6 +1051,24 @@ while ($row = $student_types_result->fetch_assoc()) {
             });
         }
 
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            });
+        }
+
+        function formatTime(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleTimeString('en-US', {
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            });
+        }
+
         // Dropout Trend Chart
         function createDropoutChart(data) {
             const ctx = document.getElementById('dropoutTrendChart').getContext('2d');
@@ -1197,12 +1214,12 @@ while ($row = $student_types_result->fetch_assoc()) {
                             <tr><td><strong>Name:</strong></td><td>${student.first_name || ''} ${student.middle_name || ''} ${student.last_name || ''}</td></tr>
                             <tr><td><strong>Username:</strong></td><td>${student.username}</td></tr>
                             <tr><td><strong>Email:</strong></td><td>${student.email}</td></tr>
-                            <tr><td><strong>Date of Birth:</strong></td><td>${student.date_of_birth || 'N/A'}</td></tr>
+                            <tr><td><strong>Date of Birth:</strong></td><td>${formatDate(student.date_of_birth) || 'N/A'}</td></tr>
                             <tr><td><strong>Gender:</strong></td><td>${student.gender || 'N/A'}</td></tr>
                             <tr><td><strong>Address:</strong></td><td>${student.address || 'N/A'}</td></tr>
                             <tr><td><strong>Grade Level:</strong></td><td>${student.grade_level || 'N/A'}</td></tr>
                             <tr><td><strong>Status:</strong></td><td><span class="badge ${getStatusBadgeClass(student.enrollment_status)}">${student.enrollment_status}</span></td></tr>
-                            <tr><td><strong>Registered:</strong></td><td>${new Date(student.date_registered).toLocaleDateString()}</td></tr>
+                            <tr><td><strong>Registered:</strong></td><td>${formatDate(student.date_registered)} - ${formatTime(student.date_registered)}</td></tr>
                         </table>
                     </div>
                     <div class="col-md-6">
@@ -1211,7 +1228,7 @@ while ($row = $student_types_result->fetch_assoc()) {
                             <tr><td><strong>Parent Name:</strong></td><td>${student.parent_full_name || 'N/A'}</td></tr>
                             <tr><td><strong>Contact:</strong></td><td>${student.contact_num || 'N/A'}</td></tr>
                             <tr><td><strong>Relationship:</strong></td><td>${student.relationship || 'N/A'}</td></tr>
-                            <tr><td><strong>Facebook:</strong></td><td>${student.fb_account !== 'No provided link' ? `<a href="${student.fb_account}" class="text-primary" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook me-1 "></i>View Link</a>` : 'N/A'}</td></tr>
+                            <tr><td><strong>Facebook:</strong></td><td>${student.fb_account == 'Not provided link' ? `N/A` : student.fb_account == '' ? 'N/A' : `<a href="${student.fb_account}" class="text-primary" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook me-1 "></i>View Link</a>`}</td></tr>
                         </table>
                         
                         ${isTransferee ? `

@@ -128,7 +128,7 @@ $accepted_percentage = $total_requirements > 0 ? ($requirements_accepted / $tota
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../styles/general.css">
     <link rel="stylesheet" href="../styles/sidebar.css">
-    <title>Fonthills Christian School - Files & Requirements</title>
+    <title>Foothills Christian School - Files & Requirements</title>
     <style>
         body{
             background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
@@ -904,7 +904,7 @@ $accepted_percentage = $total_requirements > 0 ? ($requirements_accepted / $tota
                             <strong class="text-muted">School Office:</strong> (02) 123-4567</p>
                             <p class="small mb-2"><strong class="text-muted">
                             <i class="fa-solid fa-envelope me-1 text-success"></i>    
-                            Email:</strong> enrollment@fonthills.edu.ph</p>
+                            Email:</strong> enrollment@foothills.edu.ph</p>
                             <p class="small mb-2">
                             <i class="fa-solid fa-clock me-1 text-success"></i>
                                 <strong class="text-muted">Office Hours:</strong> Mon-Fri 8:00 AM - 5:00 PM</p>

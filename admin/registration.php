@@ -3,7 +3,7 @@
 session_start();
 require_once "../backend/config.php";
 
-if($_SESSION["role"] !== "Admin"){
+if ($_SESSION["role"] !== "Admin") {
     header("Location: ../components/logout.php");
     exit;
 }
@@ -1012,6 +1012,17 @@ while ($row = $years_result->fetch_assoc()) {
                 });
 
                 if (result.isConfirmed) {
+                    // Show loading state
+                    Swal.fire({
+                        title: 'Processing...',
+                        html: 'Accepting registration and sending notification email...',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
                     try {
                         const response = await fetch('./registration_lists/update_status.php', {
                             method: 'POST',
@@ -1027,6 +1038,7 @@ while ($row = $years_result->fetch_assoc()) {
                         const data = await response.json();
 
                         if (data.success) {
+                            Swal.close();
                             await Swal.fire({
                                 title: 'Registration Accepted!',
                                 text: 'The student registration has been successfully accepted.',
@@ -1065,6 +1077,17 @@ while ($row = $years_result->fetch_assoc()) {
                 });
 
                 if (result.isConfirmed) {
+                    // Show loading state
+                    Swal.fire({
+                        title: 'Processing...',
+                        html: 'Declining registration and sending notification email...',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
                     try {
                         const response = await fetch('./registration_lists/update_status.php', {
                             method: 'POST',
@@ -1080,24 +1103,26 @@ while ($row = $years_result->fetch_assoc()) {
                         const data = await response.json();
 
                         if (data.success) {
+                            Swal.close();
                             await Swal.fire({
                                 title: 'Registration Declined!',
-                                text: 'The student registration has been declined.',
+                                text: 'The student registration has been declined and a notification email has been sent.',
                                 icon: 'success',
                                 confirmButtonColor: '#e74c3c'
+                            }).then((result) => {
+                                if (result) {
+                                    window.location.reload();
+                                }
                             });
-
-                            // Close modal and refresh data
-                            bootstrap.Modal.getInstance(document.getElementById('registrationModal')).hide();
-                            this.fetchRegistrations();
                         } else {
                             throw new Error(data.message || 'Failed to decline registration');
                         }
                     } catch (error) {
                         console.error('Error declining registration:', error);
+                        Swal.close();
                         Swal.fire({
                             title: 'Error!',
-                            text: 'There was an error declining the registration. Please try again.',
+                            text: error.message || 'There was an error declining the registration. Please try again.',
                             icon: 'error',
                             confirmButtonColor: '#e74c3c'
                         });

@@ -26,12 +26,12 @@ function sendVerificationEmail($email, $firstName, $verificationCode) {
         // $mail->SMTPDebug = SMTP::DEBUG_SERVER;
 
         // Recipients
-        $mail->setFrom('donotreply.fh.qc@gmail.com', 'Fonthills Christian School');
+        $mail->setFrom('donotreply.fh.qc@gmail.com', 'Foothills Christian School');
         $mail->addAddress($email, $firstName);
 
         // Content
         $mail->isHTML(true);
-        $mail->Subject = 'Email Verification - Fonthills Christian School';
+        $mail->Subject = 'Email Verification - Foothills Christian School';
         $mail->Body    = "
         <!DOCTYPE html>
         <html lang='en'>
@@ -124,14 +124,14 @@ function sendVerificationEmail($email, $firstName, $verificationCode) {
         <body>
             <div class='container'>
                 <div class='header'>
-                    <h2>Fonthills Christian School Q.C.</h2>
+                    <h2>Foothills Christian School Q.C.</h2>
                     <p>Email Verification Required</p>
                 </div>
                 <div class='content'>
                     <div class='greeting'>Dear " . htmlspecialchars($firstName) . ",</div>
                     
                     <div class='message'>
-                        Thank you for registering at Fonthills Christian School. To complete your enrollment application, please verify your email address using the verification code below:
+                        Thank you for registering at Foothills Christian School. To complete your enrollment application, please verify your email address using the verification code below:
                     </div>
                     
                     <div class='verification-code'>{$verificationCode}</div>
@@ -149,7 +149,7 @@ function sendVerificationEmail($email, $firstName, $verificationCode) {
                     </div>
                 </div>
                 <div class='footer'>
-                    <p><strong>Fonthills Christian School Q.C.</strong></p>
+                    <p><strong>Foothills Christian School Q.C.</strong></p>
                     <p>Enrollment Department</p>
                     <p>This is an automated message. Please do not reply to this email.</p>
                 </div>

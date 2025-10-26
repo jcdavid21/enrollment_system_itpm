@@ -342,7 +342,7 @@ while ($row = $grade_levels_result->fetch_assoc()) {
 
         <!-- Deadline Management Section -->
         <div class="section-card">
-            <h6><i class="fas fa-calendar-alt"></i>Set Requirements Deadline</h6>
+            <h6><i class="fas fa-calendar-alt"></i>Announcements</h6>
             <div class="row g-3">
                 <div class="col-md-4">
                     <label class="form-label">Deadline Date</label>
